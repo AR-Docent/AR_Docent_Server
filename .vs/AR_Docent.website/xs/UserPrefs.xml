@@ -1,0 +1,30 @@
+﻿<Properties StartupConfiguration="{1EAF452C-AD9C-41C5-AB58-2C03A209BCE8}|Default">
+  <MonoDevelop.Ide.ItemProperties.AR__Docent.website PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="AR_Docent.website/Components/ProductList.razor">
+    <Files>
+      <File FileName="AR_Docent.website/Pages/Index.cshtml" Line="13" Column="78" NotebookId="1" />
+      <File FileName="AR_Docent.website/Pages/Index.cshtml.cs" Line="1" Column="1" NotebookId="1" />
+      <File FileName="AR_Docent.website/Startup.cs" Line="31" Column="38" NotebookId="1" />
+      <File FileName="AR_Docent.website/Components/ProductList.razor" Line="16" Column="70" NotebookId="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="AR_Docent.website" expanded="True">
+            <Node name="AR_Docent.website" expanded="True">
+              <Node name="Components" expanded="True">
+                <Node name="ProductList.razor" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
