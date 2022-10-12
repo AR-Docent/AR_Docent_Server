@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/ar-docent-server/databases/AR_Docent_Data",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:sqlserver",
+      "dynamicId": null
+    }
+  }
+}
