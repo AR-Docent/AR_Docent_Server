@@ -20,12 +20,13 @@ namespace AR_Docent.website.Controllers
         {
             this.ProductsService = productsService;
         }
-
+        /*
         [HttpGet]
         public IEnumerable<Product> Get()
         {
             return ProductsService.GetProducts();
         }
+        */
 
         //[HttpPatch] "[FromBody]"
         [Route("Rate")]

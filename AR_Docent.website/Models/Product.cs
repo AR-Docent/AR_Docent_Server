@@ -18,4 +18,5 @@ namespace AR_Docent.website.Models
 
         public override string ToString() => JsonSerializer.Serialize<Product>(this);
     }
+
 }

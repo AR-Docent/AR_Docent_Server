@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AR_Docent.website", "AR_Docent.website\AR_Docent.website.csproj", "{1EAF452C-AD9C-41C5-AB58-2C03A209BCE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AR_Docent.website", "AR_Docent.website\AR_Docent.website.csproj", "{1EAF452C-AD9C-41C5-AB58-2C03A209BCE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
