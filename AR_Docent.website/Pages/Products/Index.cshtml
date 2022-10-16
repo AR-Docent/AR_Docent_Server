@@ -25,8 +25,8 @@
 				<td>@item.name</td>
 				<td>@item.created_at</td>
 				<td>
-					<a class="btn btn-primary btn-sm" href="/Products/Edit?id=">Edit</a>
-					<a class="btn btn-primary btn-sm" href="/Products/Delete?id=">Delete</a>
+					<a class="btn btn-primary btn-sm" href="/Products/Edit?id=@item.id">Edit</a>
+					<a class="btn btn-primary btn-sm" href="/Products/Delete?id=@item.id">Delete</a>
 				</td>
 			</tr>
 		}
