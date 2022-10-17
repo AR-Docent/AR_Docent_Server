@@ -1,0 +1,29 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@page
+@using Microsoft.Data.SqlClient;
+
+@{
+    try
+    {
+        string _id = Request.Query["id"];
+        string connectionString = "Server = tcp:ar-docent-server.database.windows.net,1433;Initial Catalog = AR_Docent_Data; Persist Security Info=False;User ID = admin_; Password=1q2w3e4r!; MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+            string sql = "DELETE FROM product WHERE id=@id";
+            using (SqlCommand cmd = new SqlCommand(sql, connection))
+            {
+                cmd.Parameters.AddWithValue("@id", _id);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+    }
+    catch (Exception ex)
+    {
+
+    }
+    Response.Redirect("/Products/Index");
+}
