@@ -34,6 +34,10 @@ namespace AR_Docent.website.Pages.Products
             //save the new productinfo in to the database
             try
             {
+                ImageStorage imageStorage = new ImageStorage();
+                imageStorage.Initialize(StorageConfig.connectionString, StorageConfig.imageContainerName);
+                imageStorage.Save(productInfo.image, productInfo.id.ToString());
+                
                 using (SqlConnection connection = new SqlConnection(SqlConfig.connectionString))
                 {
                     connection.Open();

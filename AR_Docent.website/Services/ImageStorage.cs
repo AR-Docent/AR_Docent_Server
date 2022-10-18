@@ -11,7 +11,7 @@ namespace AR_Docent.website.Services
     public class ImageStorage : StorageService
     {
         private BlobServiceClient _blobServiceClient;
-        private BlobContainerClient _containerClient; 
+        private BlobContainerClient _containerClient;
         
         public Task Initialize(string connectionStr, string containerName)
         {
