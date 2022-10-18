@@ -3,13 +3,13 @@
 *@
 @page
 @using Microsoft.Data.SqlClient;
+@using AR_Docent.website.Services;
 
 @{
     try
     {
         string _id = Request.Query["id"];
-        string connectionString = "Server = tcp:ar-docent-server.database.windows.net,1433;Initial Catalog = AR_Docent_Data; Persist Security Info=False;User ID = admin_; Password=1q2w3e4r!; MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
-        using (SqlConnection connection = new SqlConnection(connectionString))
+        using (SqlConnection connection = new SqlConnection(SqlConfig.connectionString))
         {
             connection.Open();
             string sql = "DELETE FROM product WHERE id=@id";

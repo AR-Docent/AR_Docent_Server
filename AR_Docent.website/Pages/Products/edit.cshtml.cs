@@ -1,4 +1,5 @@
 using AR_Docent.website.Models;
+using AR_Docent.website.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
@@ -8,7 +9,6 @@ namespace AR_Docent.website.Pages.Products
 {
     public class editModel : PageModel
     {
-        private static readonly string connectionString = "Server = tcp:ar-docent-server.database.windows.net,1433;Initial Catalog = AR_Docent_Data; Persist Security Info=False;User ID = admin_; Password=1q2w3e4r!; MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
         public ProductInfo productInfo { get; private set; } = new ProductInfo();
         public string errorMessage { get; private set; } = "";
         public string successMessage { get; private set; } = "";
@@ -18,7 +18,7 @@ namespace AR_Docent.website.Pages.Products
             try
             {
                 string _id = Request.Query["id"];
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(SqlConfig.connectionString))
                 {
                     connection.Open();
                     string _sqlQuery = "SELECT * FROM product WHERE id=@id";
@@ -62,7 +62,7 @@ namespace AR_Docent.website.Pages.Products
             }
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(SqlConfig.connectionString))
                 {
                     connection.Open();
                     string _sqlQuery = "UPDATE product " +

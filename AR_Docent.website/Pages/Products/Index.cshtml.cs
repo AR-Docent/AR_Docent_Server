@@ -1,4 +1,5 @@
 using AR_Docent.website.Models;
+using AR_Docent.website.Services;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Mvc;
@@ -13,13 +14,12 @@ namespace AR_Docent.website.Pages.Products
 {
     public class IndexModel : PageModel
     {
-        private static readonly string connectionString = "Server = tcp:ar-docent-server.database.windows.net,1433;Initial Catalog = AR_Docent_Data; Persist Security Info=False;User ID = admin_; Password=1q2w3e4r!; MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
         public List<ProductInfo> ProductInfos { get; private set; } = new List<ProductInfo>();
         public void OnGet()
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(SqlConfig.connectionString))
                 {
                     connection.Open();
                     string _sqlQuery = "SELECT * FROM product";
