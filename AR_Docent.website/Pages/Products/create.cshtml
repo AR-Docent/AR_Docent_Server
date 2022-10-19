@@ -13,32 +13,30 @@
 	</div>
 }
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
 	<div class="row mb-3">
 		<label class="col-sm-3 col-form-label">Title</label>
 		<div class="col-sm-6">
-			<input type="text" class="form-control" name="title" value="@Model.productInfo.title" />
+			<input type="text" class="form-control" name="title" asp-for="productInfo.title" />
 		</div>
 	</div>
 	<div class="row mb-3">
 		<label class="col-sm-3 col-form-label">Name</label>
 		<div class="col-sm-6">
-			<input type="text" class="form-control" name="name" value="@Model.productInfo.name" />
+			<input type="text" class="form-control" name="name" asp-for="productInfo.name" />
 		</div>
 	</div>
 	<div class="row mb-3">
 		<label class="col-sm-3 col-form-label">Content</label>
 		<div class="col-sm-6">
-			<textarea type="text" class="form-control" rows="5" name="content" value="@Model.productInfo.content"></textarea>
+			<textarea type="text" class="form-control" rows="5" name="content" asp-for="productInfo.content"></textarea>
 		</div>
 	</div>
 	
 
 	<div class="form-group">
-		<div class="col-sm-6">
-			<label for="image">인식 시킬 이미지를 선택하세요 :</label>
-			<input type="file" id="image" name="image" value="@Model.productInfo.image"/>
-		</div>
+		@Html.AntiForgeryToken()
+		<input type="file" class="form-control" name="image" asp-for="productInfo.image" />
 	</div>
 
 	@if (Model.successMessage.Length > 0)

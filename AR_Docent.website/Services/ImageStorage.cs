@@ -1,10 +1,15 @@
 ﻿using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs;
 using Azure;
+using Azure.Identity;
 using System.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System;
+using AR_Docent.website.Models;
+using System.ComponentModel;
+using Microsoft.AspNetCore.Http;
 
 namespace AR_Docent.website.Services
 {
@@ -13,10 +18,15 @@ namespace AR_Docent.website.Services
         private BlobServiceClient _blobServiceClient;
         private BlobContainerClient _containerClient;
         
-        public Task Initialize(string connectionStr, string containerName)
+        public Task Initialize()
         {
-            _blobServiceClient = new BlobServiceClient(connectionStr);
-            _containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+            _blobServiceClient = new BlobServiceClient(
+                new Uri("https://imageaudiostorageaccount.blob.core.windows.net"),
+                new DefaultAzureCredential());
+
+            //_containerClient = _blobServiceClient.GetBlobContainerClient(StorageConfig.imageContainerName);
+            //return _containerClient.CreateIfNotExistsAsync();
+            _containerClient = _blobServiceClient.CreateBlobContainer(StorageConfig.imageContainerName);
             return _containerClient.CreateIfNotExistsAsync();
         }
 
@@ -32,13 +42,24 @@ namespace AR_Docent.website.Services
             return items;
         }
 
-        public Task Save(Stream fileStream, string name)
+        public Task Upload(IFormFile file, string name)
         {
             BlobClient blobClient = _containerClient.GetBlobClient(name);
-            return blobClient.UploadAsync(fileStream);
+
+            byte[] b;
+            using (MemoryStream target = new MemoryStream())
+            {
+                file.CopyToAsync(target);
+                using (BinaryReader br = new BinaryReader(target))
+                {
+                    b = br.ReadBytes((int)target.Length);
+                }
+            }
+            BinaryData data = new BinaryData(b);
+            return blobClient.UploadAsync(data);
         }
 
-        public Task<Stream> Load(string name)
+        public Task<Stream> Download(string name)
         {
             BlobClient blobClient = _containerClient.GetBlobClient(name);
             return blobClient.OpenReadAsync();

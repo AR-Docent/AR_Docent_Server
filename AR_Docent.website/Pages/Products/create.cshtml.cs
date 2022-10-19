@@ -24,6 +24,7 @@ namespace AR_Docent.website.Pages.Products
             productInfo.title = Request.Form["title"];
             productInfo.name = Request.Form["name"];
             productInfo.content = Request.Form["content"];
+            productInfo.image = Request.Form.Files[0];
 
             if (productInfo.content.Length == 0 || productInfo.name.Length == 0 ||
                 productInfo.title.Length == 0)
@@ -34,10 +35,11 @@ namespace AR_Docent.website.Pages.Products
             //save the new productinfo in to the database
             try
             {
-                ImageStorage imageStorage = new ImageStorage();
-                imageStorage.Initialize(StorageConfig.connectionString, StorageConfig.imageContainerName);
-                imageStorage.Save(productInfo.image, productInfo.id.ToString());
-                
+                ImageStorage imgStorage = new ImageStorage();
+
+                imgStorage.Initialize();
+                imgStorage.Upload(productInfo.image, productInfo.id.ToString() + ".png");
+
                 using (SqlConnection connection = new SqlConnection(SqlConfig.connectionString))
                 {
                     connection.Open();
