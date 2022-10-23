@@ -20,13 +20,16 @@ namespace AR_Docent.website.Services
         
         public Task Initialize()
         {
+            /*
             _blobServiceClient = new BlobServiceClient(
                 new Uri("https://imageaudiostorageaccount.blob.core.windows.net"),
                 new DefaultAzureCredential());
+            */
+            _blobServiceClient = new BlobServiceClient(StorageConfig.connectionString);
 
             //_containerClient = _blobServiceClient.GetBlobContainerClient(StorageConfig.imageContainerName);
             //return _containerClient.CreateIfNotExistsAsync();
-            _containerClient = _blobServiceClient.CreateBlobContainer(StorageConfig.imageContainerName);
+            _containerClient = _blobServiceClient.GetBlobContainerClient(StorageConfig.imageContainerName);
             return _containerClient.CreateIfNotExistsAsync();
         }
 
