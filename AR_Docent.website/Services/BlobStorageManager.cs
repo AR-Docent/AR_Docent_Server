@@ -14,7 +14,7 @@ using System.Diagnostics;
 
 namespace AR_Docent.website.Services
 {
-    public class ImageStorage : StorageService
+    public class BlobStorageManager : StorageService
     {
         private BlobServiceClient _blobServiceClient;
         private BlobContainerClient _containerClient;
@@ -68,6 +68,12 @@ namespace AR_Docent.website.Services
                 Debug.WriteLine(ex.ObjectName);
                 return;
             }
+        }
+
+        public async Task Delete(string name)
+        {
+            BlobClient blobClient = _containerClient.GetBlobClient(name);
+            await blobClient.DeleteIfExistsAsync();
         }
 
         public Task<Stream> Download(string name)

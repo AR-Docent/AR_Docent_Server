@@ -9,8 +9,17 @@
     try
     {
         string _id = Request.Query["id"];
+        string _name = Request.Query["name"];
+        string _title = Request.Query["title"];
+
         using (SqlConnection connection = new SqlConnection(SqlConfig.connectionString))
         {
+            await Task.Run(async () =>
+    {
+                BlobStorageManager imgStorage = new BlobStorageManager();
+                await imgStorage.Initialize();
+                await imgStorage.Delete(_name + "_" + _title);
+            });
             connection.Open();
             string sql = "DELETE FROM product WHERE id=@id";
             using (SqlCommand cmd = new SqlCommand(sql, connection))
@@ -19,11 +28,10 @@
                 cmd.ExecuteNonQuery();
             }
         }
-
     }
     catch (Exception ex)
     {
-
+        
     }
     Response.Redirect("/Products/Index");
 }

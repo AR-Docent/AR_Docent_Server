@@ -16,7 +16,7 @@ namespace AR_Docent.website.Pages.Products
         public string errorMessage { get; private set; } = "";
         public string successMessage { get; private set; } = "";
         
-        private ImageStorage imgStorage = new ImageStorage();
+        private BlobStorageManager imgStorage = new BlobStorageManager();
         
         public void OnGet()
         {
@@ -25,7 +25,7 @@ namespace AR_Docent.website.Pages.Products
         private async Task UploadTask()
         {
             await imgStorage.Initialize();
-            await imgStorage.Upload(productInfo.image, productInfo.image.FileName);
+            await imgStorage.Upload(productInfo.image, productInfo.name + "_" + productInfo.title);
             return;
         }
 

@@ -12,6 +12,8 @@ namespace AR_Docent.website.Models
         public string title { get; set; }
         [NotMapped]
         public IFormFile image { get; set; }
+        [NotMapped]
+        public IFormFile audio { get; set; }
         public string content { get; set; }
         public string created_at { get; set; }
     }

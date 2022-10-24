@@ -11,6 +11,7 @@ namespace AR_Docent.website.Services
         public Task Initialize();
         public Task<IEnumerable<string>> GetItemNames();
         public Task Upload(IFormFile file, string name);
+        public Task Delete(string name);
         public Task<Stream> Download(string name);
     }
 }
