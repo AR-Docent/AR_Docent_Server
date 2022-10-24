@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AR_Docent.website.Pages.Products
 {
@@ -15,11 +16,20 @@ namespace AR_Docent.website.Pages.Products
         public string errorMessage { get; private set; } = "";
         public string successMessage { get; private set; } = "";
         
+        private ImageStorage imgStorage = new ImageStorage();
+        
         public void OnGet()
         {
         }
 
-        public void OnPost()
+        private async Task UploadTask()
+        {
+            await imgStorage.Initialize();
+            await imgStorage.Upload(productInfo.image, productInfo.image.FileName);
+            return;
+        }
+
+        public async Task OnPost()
         {
             productInfo.title = Request.Form["title"];
             productInfo.name = Request.Form["name"];
@@ -35,11 +45,7 @@ namespace AR_Docent.website.Pages.Products
             //save the new productinfo in to the database
             try
             {
-                ImageStorage imgStorage = new ImageStorage();
-
-                imgStorage.Initialize();
-                imgStorage.Upload(productInfo.image, productInfo.id.ToString() + ".png");
-
+                await UploadTask();
                 using (SqlConnection connection = new SqlConnection(SqlConfig.connectionString))
                 {
                     connection.Open();
@@ -59,11 +65,10 @@ namespace AR_Docent.website.Pages.Products
             catch (Exception ex)
             {
                 errorMessage = ex.Message;
+                Console.WriteLine(errorMessage);
                 return;
             }
             successMessage = "New ProductInfo Added Correctly.";
-            productInfo = new ProductInfo();
-
             Response.Redirect("/Products/Index");
         }
     }

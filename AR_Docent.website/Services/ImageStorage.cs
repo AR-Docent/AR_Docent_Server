@@ -10,6 +10,7 @@ using System;
 using AR_Docent.website.Models;
 using System.ComponentModel;
 using Microsoft.AspNetCore.Http;
+using System.Diagnostics;
 
 namespace AR_Docent.website.Services
 {
@@ -27,9 +28,8 @@ namespace AR_Docent.website.Services
             */
             _blobServiceClient = new BlobServiceClient(StorageConfig.connectionString);
 
-            //_containerClient = _blobServiceClient.GetBlobContainerClient(StorageConfig.imageContainerName);
-            //return _containerClient.CreateIfNotExistsAsync();
             _containerClient = _blobServiceClient.GetBlobContainerClient(StorageConfig.imageContainerName);
+            //_containerClient = _blobServiceClient.CreateBlobContainer(StorageConfig.imageContainerName);
             return _containerClient.CreateIfNotExistsAsync();
         }
 
@@ -45,21 +45,29 @@ namespace AR_Docent.website.Services
             return items;
         }
 
-        public Task Upload(IFormFile file, string name)
+        public async Task Upload(IFormFile file, string name)
         {
             BlobClient blobClient = _containerClient.GetBlobClient(name);
+            byte[] buffer;
+            BinaryReader reader;
+            MemoryStream target = new MemoryStream();
 
-            byte[] b;
-            using (MemoryStream target = new MemoryStream())
+            try
             {
-                file.CopyToAsync(target);
-                using (BinaryReader br = new BinaryReader(target))
-                {
-                    b = br.ReadBytes((int)target.Length);
-                }
+                await file.CopyToAsync(target);
+                reader = new BinaryReader(target);
+                buffer = new byte[file.Length];
+
+                reader.Read(buffer, 0, buffer.Length);
+                BinaryData data = new BinaryData(buffer);
+                await blobClient.UploadAsync(data);
+                target.Dispose();
             }
-            BinaryData data = new BinaryData(b);
-            return blobClient.UploadAsync(data);
+            catch (ObjectDisposedException ex)
+            {
+                Debug.WriteLine(ex.ObjectName);
+                return;
+            }
         }
 
         public Task<Stream> Download(string name)
