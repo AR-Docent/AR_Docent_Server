@@ -1,0 +1,39 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Products</h2>
+<a class='btn btn-primary btn-sm' asp-controller="Product" asp-action="Create" method="get">New Product</a>
+
+<ul>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Title</th>
+				<th>Name</th>
+				<th>Create At</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (Product item in (IEnumerable<Product>)ViewData["items"])
+			{
+				<tr>
+					<td>@item.id</td>
+					<td>@item.title</td>
+					<td>@item.name</td>
+					<td>@item.created_at</td>
+					<td>
+						<a class="btn btn-primary btn-sm" asp-controller="Product" asp-action="Details" asp-route-id="@item.id">Details</a>
+					</td>
+					<td>
+						<a class="btn btn-primary btn-sm" asp-controller="Product" asp-action="Delete" asp-route-id="@item.id">Delete</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</ul>
