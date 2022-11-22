@@ -1,9 +1,5 @@
 {
   "dependencies": {
-    "secrets1": {
-      "type": "secrets",
-      "connectionId": "VaultUri"
-    },
     "mssql1": {
       "type": "mssql",
       "connectionId": "ConnectionStrings:Sql"
@@ -11,6 +7,10 @@
     "storage1": {
       "type": "storage",
       "connectionId": "ConnectionString:Blob"
+    },
+    "secrets1": {
+      "type": "secrets",
+      "connectionId": "VaultUri"
     }
   }
 }
