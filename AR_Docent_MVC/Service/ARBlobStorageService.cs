@@ -23,7 +23,9 @@ namespace AR_Docent_MVC.Service
         
         private UserDelegationKey _userDelegationKey;
         private Dictionary<string, Uri> _sasUri;
-
+        
+        //file length로 버전관리 생성일자.
+        
         public ARBlobStorageService(AzureKeyVaultService azureKey)
         {
             _azureKey = azureKey;
@@ -39,7 +41,7 @@ namespace AR_Docent_MVC.Service
                 }
             );
         }
-
+        //user 폴더 생성
         public string StringGenerator(int length)
         {
             using (var crypto = new RNGCryptoServiceProvider())

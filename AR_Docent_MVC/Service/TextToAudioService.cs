@@ -1,15 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.CognitiveServices.Speech;
-using Microsoft.CognitiveServices.Speech.Audio;
 using AR_Docent_MVC.Config;
-using Azure.Storage.Blobs;
 using System.Threading;
-using Microsoft.Extensions.Azure;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AR_Docent_MVC.Service
 {
@@ -69,7 +63,7 @@ namespace AR_Docent_MVC.Service
                     break;
             }
         }
-
+        //오픈 소스.
         private byte[] MakeWaveHeader(int fileSize, int hz, int channel, int bit)
         {
             byte[] header = new byte[44];

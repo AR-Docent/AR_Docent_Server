@@ -13,6 +13,7 @@ using Azure.Storage.Queues;
 using Azure.Storage.Blobs;
 using Azure.Core.Extensions;
 using AR_Docent_MVC.Service;
+using AR_Docent_MVC.Models;
 
 namespace AR_Docent_MVC
 {
@@ -37,7 +38,8 @@ namespace AR_Docent_MVC
             
             services.AddMvc();
             services.AddSingleton<AzureKeyVaultService>();
-            services.AddTransient<ARBlobStorageService>();
+            services.AddSingleton<SqlDatabaseService<Product>>();
+            services.AddSingleton<ARBlobStorageService>();
             services.AddTransient<TextToAudioService>();
         }
 

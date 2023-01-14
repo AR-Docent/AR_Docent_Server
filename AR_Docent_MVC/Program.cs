@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;
 using Azure.Identity;
+using System.Diagnostics;
 
 namespace AR_Docent_MVC
 {
@@ -16,6 +17,7 @@ namespace AR_Docent_MVC
             Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((context, config) =>
             {
+                Debug.WriteLine(Environment.GetEnvironmentVariable("VaultUri"));
                 var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
                 config.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
             })

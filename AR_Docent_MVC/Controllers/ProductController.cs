@@ -23,15 +23,19 @@ namespace AR_Docent_MVC.Controllers
         private AzureKeyVaultService _azureKey;
         private ARBlobStorageService _storageService;
         private TextToAudioService _audioService;
+        private SqlDatabaseService<Product> _sqlService;
+        
         private List<Product> products;
         public ProductController(AzureKeyVaultService azureKey,
             ARBlobStorageService storageService,
-            TextToAudioService audioService) : base()
+            TextToAudioService audioService,
+            SqlDatabaseService<Product> sqlService) : base()
         {
             products = new List<Product>();
             _azureKey = azureKey;
             _storageService = storageService;
             _audioService = audioService;
+            _sqlService = sqlService;
         }
 
         // GET: ProductController
@@ -39,6 +43,7 @@ namespace AR_Docent_MVC.Controllers
         {
             try
             {
+                /*
                 using (SqlConnection connection = new SqlConnection(_azureKey.sqlConnectionString))
                 {
                     connection.Open();
@@ -63,6 +68,8 @@ namespace AR_Docent_MVC.Controllers
                         }
                     }
                 }
+                */
+                products = _sqlService.GetItems("product");
                 ViewData["items"] = products;
             }
             catch (Exception ex)
@@ -75,9 +82,10 @@ namespace AR_Docent_MVC.Controllers
         // GET: ProductController/Details/5
         public async Task<ActionResult> Details(int id)
         {
-            Product product = new Product();
+            //Product product = new Product();
             try
             {
+                /*
                 using (SqlConnection connection = new SqlConnection(_azureKey.sqlConnectionString))
                 {
                     connection.Open();
@@ -100,6 +108,11 @@ namespace AR_Docent_MVC.Controllers
                         }
                     }
                 }
+                */
+                Product product = _sqlService.GetItemById("product", id);
+                product.img_name = _storageService.GetItemUrl(ServerConfig.imgContainerName, product.img_name);
+                product.audio_name = _storageService.GetItemUrl(ServerConfig.audioContainerName, product.audio_name);
+                Debug.WriteLine(product.id.ToString(), product.title, product.name, product.created_at, product.content, product.img_name, product.audio_name);
                 return View(product);
 
             }
@@ -131,7 +144,7 @@ namespace AR_Docent_MVC.Controllers
                     byte[] audio = await _audioService.TextToSpeech(product.content);
                     await _storageService.Upload(audio, ServerConfig.audioContainerName, product.audio_name);
                 });
-                
+                /*
                 using (SqlConnection connection = new SqlConnection(_azureKey.sqlConnectionString))
                 {
                     connection.Open();
@@ -149,7 +162,8 @@ namespace AR_Docent_MVC.Controllers
                         cmd.ExecuteNonQuery();
                     }
                 }
-
+                */
+                _sqlService.AddItem("product", product);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -184,7 +198,9 @@ namespace AR_Docent_MVC.Controllers
         {
             try
             {
-
+                string del_imgName = null;
+                string del_audioName = null;
+                /*
                 using (SqlConnection connection = new SqlConnection(_azureKey.sqlConnectionString))
                 {
                     connection.Open();
@@ -205,22 +221,28 @@ namespace AR_Docent_MVC.Controllers
                             }
                         }
                     }
-
-                    if (del_imgName == null || del_audioName == null)
-                    {
-                        return NotFound();
-                    }
-                    
-                    await _storageService.Delete(ServerConfig.imgContainerName, del_imgName);
-                    await _storageService.Delete(ServerConfig.audioContainerName, del_audioName);
-
-                    sql = "DELETE FROM product WHERE id=@id";
-                    using (SqlCommand cmd = new SqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@id", id);
-                        cmd.ExecuteNonQuery();
-                    }
                 }
+                */
+                Product product = _sqlService.GetItemById("product", id);
+                del_audioName = product.audio_name;
+                del_imgName = product.img_name;
+                
+                if (del_imgName == null || del_audioName == null)
+                {
+                    return NotFound();
+                }
+
+                await _storageService.Delete(ServerConfig.imgContainerName, del_imgName);
+                await _storageService.Delete(ServerConfig.audioContainerName, del_audioName);
+                /*
+                sql = "DELETE FROM product WHERE id=@id";
+                using (SqlCommand cmd = new SqlCommand(sql, connection))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+                */
+                _sqlService.DeleteByID("product", id);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
