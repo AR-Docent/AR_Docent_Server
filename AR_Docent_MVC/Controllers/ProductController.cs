@@ -39,36 +39,10 @@ namespace AR_Docent_MVC.Controllers
         }
 
         // GET: ProductController
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
             try
             {
-                /*
-                using (SqlConnection connection = new SqlConnection(_azureKey.sqlConnectionString))
-                {
-                    connection.Open();
-                    string _query = "SELECT * FROM product";
-                    using (SqlCommand cmd = new SqlCommand(_query, connection))
-                    {
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                Product product = new Product();
-
-                                product.id = reader.GetInt32(0);
-                                product.title = reader.GetString(1);
-                                product.name = reader.GetString(2);
-                                product.created_at = reader.GetDateTime(3);
-                                product.content = reader.GetString(4);
-                                product.img_name = reader.GetString(5);
-
-                                products.Add(product);
-                            }
-                        }
-                    }
-                }
-                */
                 products = _sqlService.GetItems("product");
                 ViewData["items"] = products;
             }
@@ -80,35 +54,10 @@ namespace AR_Docent_MVC.Controllers
         }
 
         // GET: ProductController/Details/5
-        public async Task<ActionResult> Details(int id)
+        public ActionResult Details(int id)
         {
-            //Product product = new Product();
             try
             {
-                /*
-                using (SqlConnection connection = new SqlConnection(_azureKey.sqlConnectionString))
-                {
-                    connection.Open();
-                    string sql = "SELECT * FROM product WHERE id=@id";
-                    using (SqlCommand cmd = new SqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@id", id);
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                product.id = reader.GetInt32(0);
-                                product.title = reader.GetString(1);
-                                product.name = reader.GetString(2);
-                                product.created_at = reader.GetDateTime(3);
-                                product.content = reader.GetString(4);
-                                product.img_name = _storageService.GetItemUrl(ServerConfig.imgContainerName, reader.GetString(5));
-                                product.audio_name = _storageService.GetItemUrl(ServerConfig.audioContainerName, reader.GetString(6));
-                            }
-                        }
-                    }
-                }
-                */
                 Product product = _sqlService.GetItemById("product", id);
                 product.img_name = _storageService.GetItemUrl(ServerConfig.imgContainerName, product.img_name);
                 product.audio_name = _storageService.GetItemUrl(ServerConfig.audioContainerName, product.audio_name);
@@ -144,25 +93,6 @@ namespace AR_Docent_MVC.Controllers
                     byte[] audio = await _audioService.TextToSpeech(product.content);
                     await _storageService.Upload(audio, ServerConfig.audioContainerName, product.audio_name);
                 });
-                /*
-                using (SqlConnection connection = new SqlConnection(_azureKey.sqlConnectionString))
-                {
-                    connection.Open();
-                    string _sqlQuery = "INSERT INTO product " +
-                                        "(title, name, content, img_name, audio_name) VALUES " +
-                                        "(@title, @name, @content, @img_name, @audio_name);";
-                    using (SqlCommand cmd = new SqlCommand(_sqlQuery, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@title", product.title);
-                        cmd.Parameters.AddWithValue("@name", product.name);
-                        cmd.Parameters.AddWithValue("@content", product.content);
-                        cmd.Parameters.AddWithValue("@img_name", product.img_name);
-                        cmd.Parameters.AddWithValue("@audio_name", product.audio_name);
-
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-                */
                 _sqlService.AddItem("product", product);
                 return RedirectToAction(nameof(Index));
             }
@@ -200,29 +130,7 @@ namespace AR_Docent_MVC.Controllers
             {
                 string del_imgName = null;
                 string del_audioName = null;
-                /*
-                using (SqlConnection connection = new SqlConnection(_azureKey.sqlConnectionString))
-                {
-                    connection.Open();
 
-                    string del_imgName = null;
-                    string del_audioName = null;
-
-                    string sql = "SELECT * FROM product WHERE id=@id";
-                    using (SqlCommand cmd = new SqlCommand(sql, connection))
-                    {
-                        cmd.Parameters.AddWithValue("@id", id);
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                del_imgName = reader.GetString(5);
-                                del_audioName = reader.GetString(6);
-                            }
-                        }
-                    }
-                }
-                */
                 Product product = _sqlService.GetItemById("product", id);
                 del_audioName = product.audio_name;
                 del_imgName = product.img_name;
@@ -234,14 +142,6 @@ namespace AR_Docent_MVC.Controllers
 
                 await _storageService.Delete(ServerConfig.imgContainerName, del_imgName);
                 await _storageService.Delete(ServerConfig.audioContainerName, del_audioName);
-                /*
-                sql = "DELETE FROM product WHERE id=@id";
-                using (SqlCommand cmd = new SqlCommand(sql, connection))
-                {
-                    cmd.Parameters.AddWithValue("@id", id);
-                    cmd.ExecuteNonQuery();
-                }
-                */
                 _sqlService.DeleteByID("product", id);
                 return RedirectToAction(nameof(Index));
             }

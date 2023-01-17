@@ -17,7 +17,7 @@ namespace AR_Docent_MVC.Service
         {
             _azureKey = azurekey;
 
-            Task.Run(async () =>
+            Task.Run(() =>
             {
                 while (_azureKey.blobConnectionString == null || _azureKey.sqlConnectionString == null || _azureKey.speechConnectionString == null)
                 {

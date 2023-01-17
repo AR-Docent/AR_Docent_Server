@@ -4,11 +4,8 @@ using Azure.Security.KeyVault.Secrets;
 using System.Threading.Tasks;
 using System;
 using AR_Docent_MVC.Config;
-using Azure.Storage.Blobs.Models;
-using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
-using System.Diagnostics;
-using Azure.Storage.Blobs.Specialized;
+using Azure.Storage;
 
 namespace AR_Docent_MVC.Service
 {
@@ -20,7 +17,6 @@ namespace AR_Docent_MVC.Service
         public string sqlConnectionString { get; private set; } = null;
         public string blobConnectionString { get; private set; } = null;
         public string speechConnectionString { get; private set; } = null;
-        public Uri sasUri { get; set; } = null;
         public AzureKeyVaultService()
         {
             options = new SecretClientOptions()
