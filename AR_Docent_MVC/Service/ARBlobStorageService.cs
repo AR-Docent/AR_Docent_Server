@@ -86,7 +86,6 @@ namespace AR_Docent_MVC.Service
             BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             BlobClient blob = containerClient.GetBlobClient(name);
             string uri = blob.Uri.AbsoluteUri;
-            Debug.WriteLine($"item uri:{uri}");
             return uri;
         }
 
@@ -95,7 +94,6 @@ namespace AR_Docent_MVC.Service
             BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             BlobClient blob = containerClient.GetBlobClient(name);
             string uri = blob.Uri.AbsoluteUri + "?" + _sasToken[containerName];
-            Debug.WriteLine($"item uri:{uri}");
             return uri;
         }
 
