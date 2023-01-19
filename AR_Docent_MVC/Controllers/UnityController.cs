@@ -33,13 +33,24 @@ namespace AR_Docent_MVC.Controllers
         public string Get()
         {
             List<Product> products = _sqlService.GetItems("product");
+            List<UnityInfo> info = new List<UnityInfo>();
+
             for (int i = 0; i < products.Count; i++)
             {
-                products[i].img_name = _storageService.GetItemDownloadUrl(ServerConfig.imgContainerName, products[i].img_name);
-                products[i].audio_name = _storageService.GetItemDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name);
+                UnityInfo infoItem = new UnityInfo();
+
+                infoItem.id = products[i].id;
+                infoItem.name = products[i].name;
+                infoItem.audio_name = products[i].audio_name;
+                infoItem.image_name = products[i].img_name;
+                infoItem.image_url = _storageService.GetItemDownloadUrl(ServerConfig.imgContainerName, products[i].img_name);
+                infoItem.audio_url = _storageService.GetItemDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name);
+                infoItem.content = products[i].content;
+
+                info.Add(infoItem);
             }
 
-            return JsonSerializer.Serialize<IEnumerable<Product>>(products, 
+            return JsonSerializer.Serialize<IEnumerable<UnityInfo>>(info, 
                 new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,
