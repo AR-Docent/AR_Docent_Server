@@ -48,22 +48,19 @@ namespace AR_Docent_MVC.Service
         //user 폴더 생성
         public string StringGenerator(int length)
         {
-            using (var crypto = new RNGCryptoServiceProvider())
+            int bits = (length * 6);
+            int byte_size = ((bits + 7) / 8);
+            byte[] bytes = new byte[byte_size];
+            bytes = RandomNumberGenerator.GetBytes(byte_size);
+            char[] name = Convert.ToBase64String(bytes).ToCharArray();
+            for (int i = 0; i < name.Length; i++)
             {
-                int bits = (length * 6);
-                int byte_size = ((bits + 7) / 8);
-                byte[] bytes = new byte[byte_size];
-                crypto.GetBytes(bytes);
-                char[] name =  Convert.ToBase64String(bytes).ToCharArray();
-                for (int i = 0; i < name.Length; i++)
+                if (name[i] == '\\' || name[i] == '/' || name[i] == '.' || name[i] == '*')
                 {
-                    if (name[i] == '\\' || name[i] == '/' || name[i] == '.' || name[i] == '*')
-                    {
-                        name[i] = '_';
-                    }
+                    name[i] = '_';
                 }
-                return new string(name);
             }
+            return new string(name);
         }
 
         public async Task<IEnumerable<string>> GetItems(string containerName)
