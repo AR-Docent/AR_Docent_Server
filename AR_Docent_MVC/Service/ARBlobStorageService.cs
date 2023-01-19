@@ -1,5 +1,4 @@
 ﻿using Azure;
-using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
@@ -11,7 +10,6 @@ using System.Threading.Tasks;
 using System;
 using System.Threading;
 using System.Security.Cryptography;
-using Microsoft.Azure.Services.AppAuthentication;
 using Azure.Identity;
 
 namespace AR_Docent_MVC.Service

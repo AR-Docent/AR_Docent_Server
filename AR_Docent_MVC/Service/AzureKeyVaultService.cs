@@ -4,8 +4,6 @@ using Azure.Security.KeyVault.Secrets;
 using System.Threading.Tasks;
 using System;
 using AR_Docent_MVC.Config;
-using Azure.Storage.Sas;
-using Azure.Storage;
 
 namespace AR_Docent_MVC.Service
 {

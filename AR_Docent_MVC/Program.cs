@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;
 using Azure.Identity;
-using System.Diagnostics;
 
 namespace AR_Docent_MVC
 {
