@@ -3,6 +3,7 @@ using Microsoft.CognitiveServices.Speech;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace AR_Docent_MVC.Models
 {
@@ -20,5 +21,7 @@ namespace AR_Docent_MVC.Models
         public DateTime created_at { get; set; }
         public string img_name { get; set; }
         public string audio_name { get; set; }
+
+        public override string ToString() => JsonSerializer.Serialize<Product>(this);
     }
 }

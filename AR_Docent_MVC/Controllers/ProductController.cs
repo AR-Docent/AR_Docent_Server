@@ -1,38 +1,28 @@
 ﻿using AR_Docent_MVC.Config;
 using AR_Docent_MVC.Models;
 using AR_Docent_MVC.Service;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CognitiveServices.Speech;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace AR_Docent_MVC.Controllers
 {
     public class ProductController : Controller
     {
-        private AzureKeyVaultService _azureKey;
         private ARBlobStorageService _storageService;
         private TextToAudioService _audioService;
         private SqlDatabaseService<Product> _sqlService;
         
         private List<Product> products;
-        public ProductController(AzureKeyVaultService azureKey,
-            ARBlobStorageService storageService,
+        public ProductController(ARBlobStorageService storageService,
             TextToAudioService audioService,
             SqlDatabaseService<Product> sqlService) : base()
         {
             products = new List<Product>();
-            _azureKey = azureKey;
             _storageService = storageService;
             _audioService = audioService;
             _sqlService = sqlService;
@@ -152,21 +142,12 @@ namespace AR_Docent_MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
-        /*
-        // POST: ProductController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+
+        //GET: Product/info
+        [HttpGet]
+        public string Info()
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-        */
+            return "value";
+        } 
     }
 }

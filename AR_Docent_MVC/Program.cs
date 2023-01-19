@@ -17,8 +17,7 @@ namespace AR_Docent_MVC
             Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((context, config) =>
             {
-                Debug.WriteLine(Environment.GetEnvironmentVariable("VaultUri"));
-                var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
+                var keyVaultEndpoint = new Uri("https://arstorageaccess.vault.azure.net/");
                 config.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
             })
             .ConfigureWebHostDefaults(webBuilder =>

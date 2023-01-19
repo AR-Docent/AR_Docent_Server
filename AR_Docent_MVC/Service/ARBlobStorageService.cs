@@ -56,7 +56,15 @@ namespace AR_Docent_MVC.Service
                 int byte_size = ((bits + 7) / 8);
                 byte[] bytes = new byte[byte_size];
                 crypto.GetBytes(bytes);
-                return Convert.ToBase64String(bytes);
+                char[] name =  Convert.ToBase64String(bytes).ToCharArray();
+                for (int i = 0; i < name.Length; i++)
+                {
+                    if (name[i] == '\\' || name[i] == '/' || name[i] == '.' || name[i] == '*')
+                    {
+                        name[i] = '_';
+                    }
+                }
+                return new string(name);
             }
         }
 
@@ -186,7 +194,7 @@ namespace AR_Docent_MVC.Service
             await blobClient.DeleteIfExistsAsync();
         }
 
-        private async void GenerateSasBlob(Object state)
+        private void GenerateSasBlob(Object state)
         {
             try
             {
@@ -214,10 +222,10 @@ namespace AR_Docent_MVC.Service
                         new BlobUriBuilder(new Uri($"https://{_blobServiceClient.AccountName}.blob.core.windows.net")).ToUri(),
                         new DefaultAzureCredential());
                     //get user delegation key
-                    UserDelegationKey _userDelegationKey = await _blobClient.GetUserDelegationKeyAsync(now.AddMinutes(-1), end);
+                    UserDelegationKey _userDelegationKey = _blobClient.GetUserDelegationKey(now.AddMinutes(-1), end);
                     string token = _blobSasBuilder.ToSasQueryParameters(_userDelegationKey, _blobServiceClient.AccountName).ToString();
 
-                    if (!_sasToken.ContainsKey(containerName))
+                    if (_sasToken.ContainsKey(containerName) == false)
                     {
                         _sasToken.Add(containerName, token);
                     }
@@ -233,5 +241,6 @@ namespace AR_Docent_MVC.Service
                 Debug.Write(e.Message);
             }
         }
+
     }
 }
