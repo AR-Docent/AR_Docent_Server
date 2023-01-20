@@ -33,24 +33,28 @@ namespace AR_Docent_MVC.Controllers
         public string Get()
         {
             List<Product> products = _sqlService.GetItems("product");
-            List<UnityInfo> info = new List<UnityInfo>();
+            /*
+            List<UnityInfo> info = new List<UnityInfo>(products.Count);
 
             for (int i = 0; i < products.Count; i++)
             {
-                UnityInfo infoItem = new UnityInfo();
-
-                infoItem.id = products[i].id;
-                infoItem.name = products[i].name;
-                infoItem.audio_name = products[i].audio_name;
-                infoItem.image_name = products[i].img_name;
-                infoItem.image_url = _storageService.GetItemDownloadUrl(ServerConfig.imgContainerName, products[i].img_name);
-                infoItem.audio_url = _storageService.GetItemDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name);
-                infoItem.content = products[i].content;
-
-                info.Add(infoItem);
+                info[i].id = products[i].id;
+                info[i].name = products[i].name;
+                info[i].audio_name = products[i].audio_name;
+                info[i].image_name = products[i].img_name;
+                info[i].image_url = _storageService.GetItemDownloadUrl(ServerConfig.imgContainerName, products[i].img_name);
+                info[i].audio_url = _storageService.GetItemDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name);
+                info[i].content = products[i].content;
             }
-
+            
             return JsonSerializer.Serialize<IEnumerable<UnityInfo>>(info, 
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                }
+            );
+            */
+            return JsonSerializer.Serialize<IEnumerable<Product>>(products,
                 new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,
