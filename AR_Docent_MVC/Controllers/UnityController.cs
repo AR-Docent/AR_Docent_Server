@@ -56,12 +56,13 @@ namespace AR_Docent_MVC.Controllers
                     };
                     info.Add(item);
                 }
-                return JsonSerializer.Serialize<IEnumerable<UnityInfo>>(info,
+                return WebUtility.HtmlEncode(JsonSerializer.Serialize<IEnumerable<UnityInfo>>(info,
                     new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true,
+                        Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                     }
-                );
+                ));
             }
             catch (Exception e)
             {
