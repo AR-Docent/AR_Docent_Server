@@ -141,13 +141,6 @@ namespace AR_Docent_MVC.Controllers
                 Debug.WriteLine(ex.Message);
                 return RedirectToAction(nameof(Index));
             }
-        }
-
-        //GET: Product/info
-        [HttpGet]
-        public string Info()
-        {
-            return "value";
         } 
     }
 }

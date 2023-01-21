@@ -3,7 +3,12 @@ using AR_Docent_MVC.Models;
 using AR_Docent_MVC.Service;
 using Azure.AI.Vision.Core.Internal;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -33,29 +38,37 @@ namespace AR_Docent_MVC.Controllers
         public string Get()
         {
             List<Product> products = _sqlService.GetItems("product");
-            List<UnityInfo> info = new List<UnityInfo>();
+            List<UnityInfo> info = new();
 
-            for (int i = 0; i < products.Count; i++)
+            try
             {
-                UnityInfo infoItem = new UnityInfo();
-
-                infoItem.id = products[i].id;
-                infoItem.name = products[i].name;
-                infoItem.audio_name = products[i].audio_name;
-                infoItem.image_name = products[i].img_name;
-                infoItem.image_url = _storageService.GetItemDownloadUrl(ServerConfig.imgContainerName, products[i].img_name);
-                infoItem.audio_url = _storageService.GetItemDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name);
-                infoItem.content = products[i].content;
-
-                info.Add(infoItem);
-            }
-
-            return JsonSerializer.Serialize<IEnumerable<UnityInfo>>(info, 
-                new JsonSerializerOptions
+                for (int i = 0; i < products.Count; i++)
                 {
-                    PropertyNameCaseInsensitive = true,
+                    UnityInfo item = new()
+                    {
+                        id = products[i].id,
+                        name = products[i].name,
+                        audio_name = products[i].audio_name,
+                        image_name = products[i].img_name,
+                        image_url = _storageService.GetItemDownloadUrl(ServerConfig.imgContainerName, products[i].img_name),
+                        audio_url = _storageService.GetItemDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name),
+                        content = products[i].content,
+                    };
+                    info.Add(item);
                 }
-            );
+                return WebUtility.HtmlEncode(JsonSerializer.Serialize<IEnumerable<UnityInfo>>(info,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                    }
+                ));
+            }
+            catch (Exception e)
+            {
+                Debug.Write(e.Message);
+                return HttpStatusCode.InternalServerError.ToString() + e.Message;
+            }
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿
-
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace AR_Docent_MVC.Models
 {
