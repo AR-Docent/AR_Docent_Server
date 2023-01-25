@@ -6,9 +6,10 @@ using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Security.AccessControl;
 using System.Security.Cryptography;
 using Azure.Identity;
 
@@ -21,8 +22,6 @@ namespace AR_Docent_MVC.Service
 
         private int _delayDay;
         private Dictionary <string, string> _sasToken;
-
-        private Mutex _mutex;
         
         private Timer _sasTimer;
 
@@ -32,7 +31,6 @@ namespace AR_Docent_MVC.Service
         {
             _azureKey = azureKey;
             _sasToken = new Dictionary<string, string>();
-            _mutex = new Mutex(false);
             Task.Run(() => {
                 while (_azureKey.blobConnectionString == null || _azureKey.sqlConnectionString == null)
                 {
@@ -91,9 +89,9 @@ namespace AR_Docent_MVC.Service
         {
             BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             BlobClient blob = containerClient.GetBlobClient(name);
-            _mutex.WaitOne();
+            Monitor.Enter(_sasToken);
             string uri = blob.Uri.AbsoluteUri + "?" + _sasToken[containerName];
-            _mutex.ReleaseMutex();
+            Monitor.Exit(_sasToken);
             return uri;
         }
 
@@ -200,7 +198,7 @@ namespace AR_Docent_MVC.Service
                 
                 Debug.WriteLine("create sas token");
                 var conList = _blobServiceClient.GetBlobContainers().AsPages(default, 10);
-                _mutex.WaitOne();
+                Monitor.Enter(_sasToken);
                 foreach (Page<BlobContainerItem> page in conList)
                 {
                     foreach (BlobContainerItem con in page.Values)
@@ -237,7 +235,7 @@ namespace AR_Docent_MVC.Service
                         }
                     }
                 }
-                _mutex.ReleaseMutex();
+                Monitor.Exit(_sasToken);
             }
             catch (Exception e)
             {
