@@ -16,5 +16,7 @@ namespace AR_Docent_MVC.Config
         public static readonly string connectionStringAudio = "ConnectionString--Speech";
         public static readonly string audioContainerName = "araudio";
         public static readonly string region = "koreacentral";
+        //storage list
+        public static readonly string [] containers = { imgContainerName, audioContainerName };
     }
 }

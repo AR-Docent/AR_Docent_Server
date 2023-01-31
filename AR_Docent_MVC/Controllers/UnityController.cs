@@ -31,8 +31,6 @@ namespace AR_Docent_MVC.Controllers
             _sqlService = sqlService;
         }
 
-
-
         // GET: api/<ValuesController>
         [HttpGet]
         public string Get()
