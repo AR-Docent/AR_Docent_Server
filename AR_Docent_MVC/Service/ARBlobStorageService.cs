@@ -40,8 +40,7 @@ namespace AR_Docent_MVC.Service
 
                 //start timer;
                 _delayDay = 1;
-                _sasTimer = new Timer(GenerateSasBlob);
-                _sasTimer.Change(0, (int)new TimeSpan(24 * _delayDay, 0, 0).TotalMilliseconds);
+                _sasTimer = new Timer(GenerateSasBlob, null, 0, (int)new TimeSpan(24 * _delayDay, 0, 0).TotalMilliseconds);
                 return Task.CompletedTask;
             });
         }
@@ -236,6 +235,7 @@ namespace AR_Docent_MVC.Service
                     }
                 }
                 Monitor.Exit(_sasToken);
+                Debug.WriteLine("complete sas token");
             }
             catch (Exception e)
             {
