@@ -32,11 +32,11 @@ namespace AR_Docent_MVC
                 builder.AddQueueServiceClient(Configuration["azure-storageblob-connectionstring-fde43:queue"], preferMsi: true);
             });
             
-            services.AddMvc();
             services.AddSingleton<AzureKeyVaultService>();
             services.AddSingleton<SqlDatabaseService<Product>>();
             services.AddSingleton<ARBlobStorageService>();
             services.AddTransient<TextToAudioService>();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
