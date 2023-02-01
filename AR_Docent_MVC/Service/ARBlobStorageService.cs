@@ -197,7 +197,6 @@ namespace AR_Docent_MVC.Service
                 DateTime now, end;
 
                 Debug.WriteLine("create sas token");
-                var conList = _blobServiceClient.GetBlobContainers().AsPages(default, 10);
                 Monitor.Enter(_sasToken);
                 foreach (string containerName in ServerConfig.containers)
                 {
@@ -216,7 +215,7 @@ namespace AR_Docent_MVC.Service
                         );
                     //use Default Azure Credential
                     BlobServiceClient _blobClient = new BlobServiceClient(
-                        new BlobUriBuilder(new Uri($"https://{_blobServiceClient.AccountName}.blob.core.windows.net")).ToUri(),
+                        new BlobUriBuilder(new Uri($"https://{ServerConfig.accountName}.blob.core.windows.net")).ToUri(),
                         new DefaultAzureCredential());
                     //get user delegation key
                     UserDelegationKey _userDelegationKey = _blobClient.GetUserDelegationKey(now.AddMinutes(-1), end);
