@@ -48,8 +48,8 @@ namespace AR_Docent_MVC.Controllers
                         name = products[i].name,
                         audio_name = products[i].audio_name,
                         image_name = products[i].img_name,
-                        image_url = _storageService.GetItemDownloadUrl(ServerConfig.imgContainerName, products[i].img_name),
-                        audio_url = _storageService.GetItemDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name),
+                        //image_url = _storageService.GetItemDownloadUrl(ServerConfig.imgContainerName, products[i].img_name),
+                        //audio_url = _storageService.GetItemDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name),
                         content = products[i].content,
                     };
                     info.Add(item);

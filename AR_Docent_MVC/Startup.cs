@@ -59,6 +59,8 @@ namespace AR_Docent_MVC
 
             app.UseAuthorization();
 
+            app.UseHttpLogging();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
