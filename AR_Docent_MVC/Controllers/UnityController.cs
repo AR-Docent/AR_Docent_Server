@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -48,19 +49,23 @@ namespace AR_Docent_MVC.Controllers
                         name = products[i].name,
                         audio_name = products[i].audio_name,
                         image_name = products[i].img_name,
-                        //image_url = _storageService.GetItemDownloadUrl(ServerConfig.imgContainerName, products[i].img_name),
-                        //audio_url = _storageService.GetItemDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name),
+                        image_url = _storageService.GetItemDownloadUrl(ServerConfig.imgContainerName, products[i].img_name),
+                        audio_url = _storageService.GetItemDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name),
                         content = products[i].content,
                     };
                     info.Add(item);
                 }
-                return WebUtility.HtmlEncode(JsonSerializer.Serialize<IEnumerable<UnityInfo>>(info,
+                /*
+                return WebUtility.HtmlEncode(Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes<List<UnityInfo>>(info,
                     new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true,
-                        Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                    }
-                ));
+                        //Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                        //Encoder = default,
+                    })
+                    ));
+                */
+                return Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes<IEnumerable<UnityInfo>>(info));
             }
             catch (Exception e)
             {

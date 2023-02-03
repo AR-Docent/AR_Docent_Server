@@ -91,6 +91,7 @@ namespace AR_Docent_MVC.Service
             BlobClient blob = containerClient.GetBlobClient(name);
             Monitor.Enter(_sasToken);
             string uri = blob.Uri.AbsoluteUri + "?" + _sasToken[containerName];
+            Debug.WriteLine("bloburl" + uri);
             Monitor.Exit(_sasToken);
             return uri;
         }
@@ -220,6 +221,8 @@ namespace AR_Docent_MVC.Service
                     //get user delegation key
                     UserDelegationKey _userDelegationKey = _blobClient.GetUserDelegationKey(now.AddMinutes(-1), end);
                     string token = _blobSasBuilder.ToSasQueryParameters(_userDelegationKey, _blobServiceClient.AccountName).ToString();
+
+                    Debug.WriteLine("token:" + token);
 
                     if (_sasToken.ContainsKey(containerName) == false)
                     {
