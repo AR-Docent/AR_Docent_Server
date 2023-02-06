@@ -4,6 +4,7 @@ using AR_Docent_MVC.Service;
 using Azure.AI.Vision.Core.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using System;
 using System.Collections.Generic;
@@ -25,11 +26,15 @@ namespace AR_Docent_MVC.Controllers
         private ARBlobStorageService _storageService;
         private SqlDatabaseService<Product> _sqlService;
 
+        private ILogger<UnityController> _logger;
+
         public UnityController(ARBlobStorageService storageService,
-            SqlDatabaseService<Product> sqlService) : base()
+            SqlDatabaseService<Product> sqlService,
+            ILogger<UnityController> logger) : base()
         {
             _storageService = storageService;
             _sqlService = sqlService;
+            _logger = logger;
         }
 
         // GET: api/<ValuesController>
@@ -43,6 +48,7 @@ namespace AR_Docent_MVC.Controllers
             {
                 for (int i = 0; i < products.Count; i++)
                 {
+                    _logger.LogDebug($"item {i} start");
                     UnityInfo item = new()
                     {
                         id = products[i].id,
@@ -53,6 +59,7 @@ namespace AR_Docent_MVC.Controllers
                         audio_url = _storageService.GetItemDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name),
                         content = products[i].content,
                     };
+                    _logger.LogDebug($"item {i} finish");
                     info.Add(item);
                 }
                 /*
@@ -70,6 +77,7 @@ namespace AR_Docent_MVC.Controllers
             catch (Exception e)
             {
                 Debug.Write(e.Message);
+                _logger.LogWarning(e.StackTrace);
                 return HttpStatusCode.InternalServerError.ToString() + e.Message;
             }
         }
