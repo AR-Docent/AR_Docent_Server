@@ -193,46 +193,53 @@ namespace AR_Docent_MVC.Service
 
         private void GenerateSasBlob(Object state)
         {
-            DateTime now, end;
-
-            Debug.WriteLine("create sas token");
-            Monitor.Enter(_sasToken);
-            foreach (string containerName in ServerConfig.containers)
+            try
             {
-                now = DateTime.UtcNow;
-                end = now.AddDays(1);
+                DateTime now, end;
 
-                BlobSasBuilder _blobSasBuilder = new BlobSasBuilder()
+                Debug.WriteLine("create sas token");
+                Monitor.Enter(_sasToken);
+                foreach (string containerName in ServerConfig.containers)
                 {
-                    BlobContainerName = containerName,
-                    Resource = "c",
-                    StartsOn = now.AddMinutes(-1),
-                    ExpiresOn = end,
-                };
-                _blobSasBuilder.SetPermissions(
-                    BlobContainerSasPermissions.Read | BlobContainerSasPermissions.List
-                    );
-                //use Default Azure Credential
-                BlobServiceClient _blobClient = new BlobServiceClient(
-                    new BlobUriBuilder(new Uri($"https://{ServerConfig.accountName}.blob.core.windows.net")).ToUri(),
-                    new DefaultAzureCredential());
-                //get user delegation key
-                UserDelegationKey _userDelegationKey = _blobClient.GetUserDelegationKey(now.AddMinutes(-1), end);
-                string token = _blobSasBuilder.ToSasQueryParameters(_userDelegationKey, _blobServiceClient.AccountName).ToString();
+                    now = DateTime.UtcNow;
+                    end = now.AddDays(1);
 
-                Debug.WriteLine("token:" + token);
+                    BlobSasBuilder _blobSasBuilder = new BlobSasBuilder()
+                    {
+                        BlobContainerName = containerName,
+                        Resource = "c",
+                        StartsOn = now.AddMinutes(-1),
+                        ExpiresOn = end,
+                    };
+                    _blobSasBuilder.SetPermissions(
+                        BlobContainerSasPermissions.Read | BlobContainerSasPermissions.List
+                        );
+                    //use Default Azure Credential
+                    BlobServiceClient _blobClient = new BlobServiceClient(
+                        new BlobUriBuilder(new Uri($"https://{ServerConfig.accountName}.blob.core.windows.net")).ToUri(),
+                        new DefaultAzureCredential());
+                    //get user delegation key
+                    UserDelegationKey _userDelegationKey = _blobClient.GetUserDelegationKey(now.AddMinutes(-1), end);
+                    string token = _blobSasBuilder.ToSasQueryParameters(_userDelegationKey, _blobServiceClient.AccountName).ToString();
 
-                if (_sasToken.ContainsKey(containerName) == false)
-                {
-                    _sasToken.Add(containerName, token);
+                    Debug.WriteLine("token:" + token);
+
+                    if (_sasToken.ContainsKey(containerName) == false)
+                    {
+                        _sasToken.Add(containerName, token);
+                    }
+                    else
+                    {
+                        _sasToken[containerName] = token;
+                    }
                 }
-                else
-                {
-                    _sasToken[containerName] = token;
-                }
+                Monitor.Exit(_sasToken);
+                Debug.WriteLine("complete sas token");
             }
-            Monitor.Exit(_sasToken);
-            Debug.WriteLine("complete sas token");
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.StackTrace);
+            }
         }
 
     }
