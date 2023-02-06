@@ -28,9 +28,11 @@ namespace AR_Docent_MVC.Controllers
 
         private ILogger<UnityController> _logger;
 
-        public UnityController(ARBlobStorageService storageService,
-            SqlDatabaseService<Product> sqlService,
-            ILogger<UnityController> logger) : base()
+        public UnityController(
+            ILogger<UnityController> logger,
+            ARBlobStorageService storageService,
+            SqlDatabaseService<Product> sqlService
+            ) : base()
         {
             _storageService = storageService;
             _sqlService = sqlService;
@@ -48,7 +50,7 @@ namespace AR_Docent_MVC.Controllers
             {
                 for (int i = 0; i < products.Count; i++)
                 {
-                    //_logger.LogDebug($"item {i} start");
+                    _logger.LogInformation($"item {i} start");
                     UnityInfo item = new()
                     {
                         id = products[i].id,
@@ -59,7 +61,7 @@ namespace AR_Docent_MVC.Controllers
                         audio_url = _storageService.GetItemDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name),
                         content = products[i].content,
                     };
-                    //_logger.LogDebug($"item {i} finish");
+                    _logger.LogInformation($"item {i} finish");
                     info.Add(item);
                 }
                 /*
@@ -77,7 +79,7 @@ namespace AR_Docent_MVC.Controllers
             catch (Exception e)
             {
                 Debug.Write(e.Message);
-                //_logger.LogWarning(e.StackTrace);
+                _logger.LogInformation(e.StackTrace);
                 return HttpStatusCode.InternalServerError.ToString() + e.Message;
             }
         }
