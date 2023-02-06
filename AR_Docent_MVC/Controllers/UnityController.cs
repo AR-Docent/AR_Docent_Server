@@ -48,7 +48,7 @@ namespace AR_Docent_MVC.Controllers
             {
                 for (int i = 0; i < products.Count; i++)
                 {
-                    _logger.LogDebug($"item {i} start");
+                    //_logger.LogDebug($"item {i} start");
                     UnityInfo item = new()
                     {
                         id = products[i].id,
@@ -59,7 +59,7 @@ namespace AR_Docent_MVC.Controllers
                         audio_url = _storageService.GetItemDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name),
                         content = products[i].content,
                     };
-                    _logger.LogDebug($"item {i} finish");
+                    //_logger.LogDebug($"item {i} finish");
                     info.Add(item);
                 }
                 /*
@@ -77,7 +77,7 @@ namespace AR_Docent_MVC.Controllers
             catch (Exception e)
             {
                 Debug.Write(e.Message);
-                _logger.LogWarning(e.StackTrace);
+                //_logger.LogWarning(e.StackTrace);
                 return HttpStatusCode.InternalServerError.ToString() + e.Message;
             }
         }
