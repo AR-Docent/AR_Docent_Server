@@ -13,6 +13,8 @@ using System.Security.AccessControl;
 using System.Security.Cryptography;
 using Azure.Identity;
 using AR_Docent_MVC.Config;
+using Azure.Storage;
+using AR_Docent_MVC.Models;
 
 namespace AR_Docent_MVC.Service
 {
@@ -21,28 +23,17 @@ namespace AR_Docent_MVC.Service
         private BlobServiceClient _blobServiceClient;
         private AzureKeyVaultService _azureKey;
 
-        private int _delayDay;
-        private Dictionary <string, string> _sasToken;
-        
-        private Timer _sasTimer;
-
         //file length로 버전관리 생성일자.
 
         public ARBlobStorageService(AzureKeyVaultService azureKey)
         {
             _azureKey = azureKey;
-            _sasToken = new Dictionary<string, string>();
             Task.Run(() => {
                 while (_azureKey.blobConnectionString == null || _azureKey.sqlConnectionString == null)
                 {
                     Thread.Sleep(100);
                 }
                 _blobServiceClient = new BlobServiceClient(_azureKey.blobConnectionString);
-
-                //start timer;
-                _delayDay = 1;
-                _sasTimer = new Timer(GenerateSasBlob, null, 0, (int)new TimeSpan(24 * _delayDay, 0, 0).TotalMilliseconds);
-                return Task.CompletedTask;
             });
         }
 
@@ -51,8 +42,7 @@ namespace AR_Docent_MVC.Service
         {
             int bits = (length * 6);
             int byte_size = ((bits + 7) / 8);
-            byte[] bytes = new byte[byte_size];
-            bytes = RandomNumberGenerator.GetBytes(byte_size);
+            byte[] bytes = RandomNumberGenerator.GetBytes(byte_size);
             char[] name = Convert.ToBase64String(bytes).ToCharArray();
             for (int i = 0; i < name.Length; i++)
             {
@@ -66,7 +56,7 @@ namespace AR_Docent_MVC.Service
 
         public async Task<IEnumerable<string>> GetItems(string containerName)
         {
-            List<string> items = new List<string>();
+            List<string> items = new ();
 
             BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             AsyncPageable<BlobItem> blobItems = containerClient.GetBlobsAsync();
@@ -85,24 +75,13 @@ namespace AR_Docent_MVC.Service
             return uri;
         }
 
-        public string GetItemDownloadUrl(string containerName, string name)
-        {
-            BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-            BlobClient blob = containerClient.GetBlobClient(name);
-            Monitor.Enter(_sasToken);
-            string uri = blob.Uri.AbsoluteUri + "?" + _sasToken[containerName];
-            Debug.WriteLine("bloburl" + uri);
-            Monitor.Exit(_sasToken);
-            return uri;
-        }
-
         public async Task Upload(IFormFile file, string containerName, string upload_name)
         {
             BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             BlobClient blobClient = containerClient.GetBlobClient(upload_name);
             byte[] buffer;
             BinaryReader reader;
-            MemoryStream target = new MemoryStream();
+            MemoryStream target = new ();
             try
             {
                 await file.CopyToAsync(target);
@@ -113,7 +92,7 @@ namespace AR_Docent_MVC.Service
                 buffer = new byte[file.Length];
 
                 reader.Read(buffer, 0, buffer.Length);
-                BinaryData data = new BinaryData(buffer);
+                BinaryData data = new (buffer);
 
                 string file_extention = Path.GetExtension(blobClient.Uri.AbsoluteUri);
 
@@ -155,7 +134,7 @@ namespace AR_Docent_MVC.Service
             BlobClient blobClient = containerClient.GetBlobClient(upload_name);
             try
             {
-                BinaryData data = new BinaryData(buffer);
+                BinaryData data = new (buffer);
                 string file_extention = Path.GetExtension(blobClient.Uri.AbsoluteUri);
 
                 BlobHttpHeaders blobHttpHeader = null;
@@ -191,20 +170,25 @@ namespace AR_Docent_MVC.Service
             await blobClient.DeleteIfExistsAsync();
         }
 
-        private void GenerateSasBlob(Object state)
+        public string GenerateSasBlob(string containerName)
         {
             try
             {
                 DateTime now, end;
 
                 Debug.WriteLine("create sas token");
-                Monitor.Enter(_sasToken);
-                foreach (string containerName in ServerConfig.containers)
-                {
-                    now = DateTime.UtcNow;
-                    end = now.AddDays(1);
+                now = DateTime.UtcNow;
+                end = now.AddMinutes(5);
 
-                    BlobSasBuilder _blobSasBuilder = new BlobSasBuilder()
+                BlobContainerClient _containerClient = new(
+                    new Uri($"https://{ServerConfig.accountName}.blob.core.windows.net/{containerName}"),
+                    new StorageSharedKeyCredential(ServerConfig.accountName, _azureKey.blobAccountKeyString)
+                    );
+
+                //get service sas token
+                if (_containerClient.CanGenerateSasUri)
+                {
+                    BlobSasBuilder _blobSasBuilder = new ()
                     {
                         BlobContainerName = containerName,
                         Resource = "c",
@@ -214,31 +198,21 @@ namespace AR_Docent_MVC.Service
                     _blobSasBuilder.SetPermissions(
                         BlobContainerSasPermissions.Read | BlobContainerSasPermissions.List
                         );
-                    //use Default Azure Credential
-                    BlobServiceClient _blobClient = new BlobServiceClient(
-                        new BlobUriBuilder(new Uri($"https://{ServerConfig.accountName}.blob.core.windows.net")).ToUri(),
-                        new DefaultAzureCredential());
-                    //get user delegation key
-                    UserDelegationKey _userDelegationKey = _blobClient.GetUserDelegationKey(now.AddMinutes(-1), end);
-                    string token = _blobSasBuilder.ToSasQueryParameters(_userDelegationKey, _blobServiceClient.AccountName).ToString();
 
+
+                    string token = _containerClient.GenerateSasUri(_blobSasBuilder).OriginalString;
                     Debug.WriteLine("token:" + token);
-
-                    if (_sasToken.ContainsKey(containerName) == false)
-                    {
-                        _sasToken.Add(containerName, token);
-                    }
-                    else
-                    {
-                        _sasToken[containerName] = token;
-                    }
+                    return token;
                 }
-                Monitor.Exit(_sasToken);
-                Debug.WriteLine("complete sas token");
+                else
+                {
+                    throw new Exception($"Can't Generate SasUri on {containerName}");
+                }
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e.StackTrace);
+                return null;
             }
         }
 

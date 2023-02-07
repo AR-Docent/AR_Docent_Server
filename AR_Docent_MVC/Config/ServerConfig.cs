@@ -12,6 +12,7 @@ namespace AR_Docent_MVC.Config
         public static readonly string connectionStringBlob = "ConnectionString--Blob";
         //blob storage account
         public static readonly string accountName = "imageaudiostorageaccount";
+        public static readonly string accountKey = "AccessKey--storage";
         //blob storage audio
         public static readonly string imgContainerName = "arimage";
         //blob storage audio config
