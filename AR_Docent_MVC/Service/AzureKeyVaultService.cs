@@ -15,6 +15,7 @@ namespace AR_Docent_MVC.Service
         public string sqlConnectionString { get; private set; } = null;
         public string blobConnectionString { get; private set; } = null;
         public string speechConnectionString { get; private set; } = null;
+        public string blobAccountKeyString { get; private set; } = null;
         public AzureKeyVaultService()
         {
             options = new SecretClientOptions()
@@ -31,29 +32,15 @@ namespace AR_Docent_MVC.Service
             client = new SecretClient(new Uri(ServerConfig.keyVaultUrl),
                 new DefaultAzureCredential(), options);
 
-            sqlConnectionString = GetSqlConnectionString().Result;
-            blobConnectionString = GetBlobStorageConnectionString().Result;
-            speechConnectionString = GetSpeechConnectionString().Result;
+            sqlConnectionString = GetSecret(ServerConfig.connectionStringSql).Result;
+            blobConnectionString = GetSecret(ServerConfig.connectionStringBlob).Result;
+            speechConnectionString = GetSecret(ServerConfig.connectionStringAudio).Result;
+            blobAccountKeyString = GetSecret(ServerConfig.accountKey).Result;
         }
 
-        private async Task<string> GetSqlConnectionString()
+        private async Task<string> GetSecret(string name)
         {
-            var secret = await client.GetSecretAsync(ServerConfig.connectionStringSql);
-            sqlConnectionString = secret.Value.Value;
-            return secret.Value.Value;
-        }
-
-        private async Task<string> GetBlobStorageConnectionString()
-        {
-            var secret = await client.GetSecretAsync(ServerConfig.connectionStringBlob);
-            blobConnectionString = secret.Value.Value;
-            return secret.Value.Value;
-        }
-
-        private async Task<string> GetSpeechConnectionString()
-        {
-            var secret = await client.GetSecretAsync(ServerConfig.connectionStringAudio);
-            speechConnectionString = secret.Value.Value;
+            var secret = await client.GetSecretAsync(name);
             return secret.Value.Value;
         }
     }

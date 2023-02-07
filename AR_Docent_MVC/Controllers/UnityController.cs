@@ -14,6 +14,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using System.Threading;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,6 +29,8 @@ namespace AR_Docent_MVC.Controllers
 
         private ILogger<UnityController> _logger;
 
+        private SasTokenContainer _sasTokens;
+
         public UnityController(
             ILogger<UnityController> logger,
             ARBlobStorageService storageService,
@@ -37,6 +40,12 @@ namespace AR_Docent_MVC.Controllers
             _storageService = storageService;
             _sqlService = sqlService;
             _logger = logger;
+
+            _sasTokens = new SasTokenContainer();
+            foreach (string name in ServerConfig.containers)
+            {
+                _sasTokens[name] = _storageService.GenerateSasBlob(name);
+            }
         }
 
         // GET: api/<ValuesController>
@@ -55,10 +64,11 @@ namespace AR_Docent_MVC.Controllers
                     {
                         id = products[i].id,
                         name = products[i].name,
+                        title = products[i].title,
                         audio_name = products[i].audio_name,
                         image_name = products[i].img_name,
-                        image_url = _storageService.GetItemDownloadUrl(ServerConfig.imgContainerName, products[i].img_name),
-                        audio_url = _storageService.GetItemDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name),
+                        image_url = GetDownloadUrl(ServerConfig.imgContainerName, products[i].img_name),
+                        audio_url = GetDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name),
                         content = products[i].content,
                     };
                     _logger.LogDebug($"item {i} finish");
@@ -82,6 +92,11 @@ namespace AR_Docent_MVC.Controllers
                 _logger.LogDebug(e.StackTrace);
                 return HttpStatusCode.InternalServerError.ToString() + e.Message;
             }
+        }
+
+        private string GetDownloadUrl(string containerName, string name)
+        {
+            return _storageService.GetItemUrl(containerName, name) + "?" + _sasTokens[containerName];
         }
     }
 }
