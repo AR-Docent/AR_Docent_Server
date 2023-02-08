@@ -167,7 +167,7 @@ namespace AR_Docent_MVC.Service
             await blobClient.DeleteIfExistsAsync();
         }
 
-        public string GenerateSasBlob(string containerName)
+        public string GenerateSasBlob(string containerName, string blobName)
         {
             try
             {
@@ -177,31 +177,30 @@ namespace AR_Docent_MVC.Service
                 now = DateTime.UtcNow;
                 end = now.AddMinutes(5);
 
-                BlobContainerClient _containerClient = new(
-                    new Uri($"https://{ServerConfig.accountName}.blob.core.windows.net/{containerName}"),
+                BlobClient _blobClient = new(
+                    new Uri($"https://{ServerConfig.accountName}.blob.core.windows.net/{containerName}/{blobName}"),
                     new StorageSharedKeyCredential(ServerConfig.accountName, _azureKey.blobAccountKeyString)
                     );
 
+
                 //get service sas token
-                if (_containerClient.CanGenerateSasUri)
+                if (_blobClient.CanGenerateSasUri)
                 {
                     BlobSasBuilder _blobSasBuilder = new ()
                     {
                         BlobContainerName = containerName,
-                        Resource = "c",
+                        BlobName = blobName,
+                        Resource = "b",
                         StartsOn = now.AddMinutes(-1),
                         ExpiresOn = end,
                     };
                     _blobSasBuilder.SetPermissions(
-                        BlobContainerSasPermissions.Read | BlobContainerSasPermissions.List
+                        BlobSasPermissions.Read | BlobSasPermissions.List
                         );
 
-
-                    string token = _containerClient.GenerateSasUri(_blobSasBuilder).OriginalString;
-                    string token_below = token.Split("?")[1];
-                    
-                    Debug.WriteLine("token:" + token_below);
-                    return token_below;
+                    string token = _blobClient.GenerateSasUri(_blobSasBuilder).OriginalString;
+                    Debug.WriteLine("token:" + token);
+                    return token;
                 }
                 else
                 {

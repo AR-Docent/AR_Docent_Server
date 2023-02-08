@@ -11,10 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
-using System.Threading;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -42,10 +39,6 @@ namespace AR_Docent_MVC.Controllers
             _logger = logger;
 
             _sasTokens = new SasTokenContainer();
-            foreach (string name in ServerConfig.containers)
-            {
-                _sasTokens[name] = _storageService.GenerateSasBlob(name);
-            }
         }
 
         // GET: api/<ValuesController>
@@ -67,8 +60,8 @@ namespace AR_Docent_MVC.Controllers
                         Title = products[i].title,
                         Audio_name = products[i].audio_name,
                         Image_name = products[i].img_name,
-                        Image_url = GetDownloadUrl(ServerConfig.imgContainerName, products[i].img_name),
-                        Audio_url = GetDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name),
+                        Image_url = _storageService.GenerateSasBlob(ServerConfig.imgContainerName, products[i].img_name),
+                        Audio_url = _storageService.GenerateSasBlob(ServerConfig.audioContainerName, products[i].audio_name),
                         Content = products[i].content,
                     };
                     _logger.LogDebug($"item {i} finish");
@@ -92,11 +85,6 @@ namespace AR_Docent_MVC.Controllers
                 _logger.LogDebug(e.StackTrace);
                 return HttpStatusCode.InternalServerError.ToString() + e.Message;
             }
-        }
-
-        private string GetDownloadUrl(string containerName, string name)
-        {
-            return _storageService.GetItemUrl(containerName, name) + "?" + _sasTokens[containerName];
         }
     }
 }
