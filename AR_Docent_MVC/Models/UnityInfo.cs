@@ -4,14 +4,14 @@ namespace AR_Docent_MVC.Models
 {
     public class UnityInfo
     {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string title { get; set; }
-        public string image_name { get; set; }
-        public string audio_name { get; set; }
-        public string image_url { get; set; }
-        public string audio_url { get; set; }
-        public string content { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Title { get; set; }
+        public string Image_name { get; set; }
+        public string Audio_name { get; set; }
+        public string Image_url { get; set; }
+        public string Audio_url { get; set; }
+        public string Content { get; set; }
 
         public override string ToString()
         {

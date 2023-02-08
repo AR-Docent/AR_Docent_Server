@@ -9,12 +9,9 @@ using System.IO;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Security.AccessControl;
 using System.Security.Cryptography;
-using Azure.Identity;
 using AR_Docent_MVC.Config;
 using Azure.Storage;
-using AR_Docent_MVC.Models;
 
 namespace AR_Docent_MVC.Service
 {
@@ -201,8 +198,10 @@ namespace AR_Docent_MVC.Service
 
 
                     string token = _containerClient.GenerateSasUri(_blobSasBuilder).OriginalString;
-                    Debug.WriteLine("token:" + token);
-                    return token;
+                    string token_below = token.Split("?")[1];
+                    
+                    Debug.WriteLine("token:" + token_below);
+                    return token_below;
                 }
                 else
                 {
