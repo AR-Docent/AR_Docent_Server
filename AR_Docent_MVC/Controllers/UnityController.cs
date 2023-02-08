@@ -62,14 +62,14 @@ namespace AR_Docent_MVC.Controllers
                     _logger.LogDebug($"item {i} start");
                     UnityInfo item = new()
                     {
-                        id = products[i].id,
-                        name = products[i].name,
-                        title = products[i].title,
-                        audio_name = products[i].audio_name,
-                        image_name = products[i].img_name,
-                        image_url = GetDownloadUrl(ServerConfig.imgContainerName, products[i].img_name),
-                        audio_url = GetDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name),
-                        content = products[i].content,
+                        Id = products[i].id,
+                        Name = products[i].name,
+                        Title = products[i].title,
+                        Audio_name = products[i].audio_name,
+                        Image_name = products[i].img_name,
+                        Image_url = GetDownloadUrl(ServerConfig.imgContainerName, products[i].img_name),
+                        Audio_url = GetDownloadUrl(ServerConfig.audioContainerName, products[i].audio_name),
+                        Content = products[i].content,
                     };
                     _logger.LogDebug($"item {i} finish");
                     info.Add(item);
