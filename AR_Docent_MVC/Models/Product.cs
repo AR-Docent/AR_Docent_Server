@@ -21,6 +21,8 @@ namespace AR_Docent_MVC.Models
         public DateTime created_at { get; set; }
         public string img_name { get; set; }
         public string audio_name { get; set; }
+        public int img_width { get; set; }
+        public int img_height { get; set; }
 
         public override string ToString() => JsonSerializer.Serialize<Product>(this);
     }

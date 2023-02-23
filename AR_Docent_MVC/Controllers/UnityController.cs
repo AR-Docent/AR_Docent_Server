@@ -63,6 +63,8 @@ namespace AR_Docent_MVC.Controllers
                         Image_url = _storageService.GenerateSasBlob(ServerConfig.imgContainerName, products[i].img_name),
                         Audio_url = _storageService.GenerateSasBlob(ServerConfig.audioContainerName, products[i].audio_name),
                         Content = products[i].content,
+                        Image_width = products[i].img_width,
+                        Image_height = products[i].img_height,
                     };
                     _logger.LogDebug($"item {i} finish");
                     info.Add(item);

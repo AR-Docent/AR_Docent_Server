@@ -40,7 +40,8 @@ namespace AR_Docent_MVC.Service
             string q_k = "(", q_v = "(";
             for (int i = 0; i < properties.Length; i++)
             {
-                if (properties[i].PropertyType == typeof(string))
+                if (properties[i].PropertyType == typeof(string) ||
+                    (properties[i].PropertyType == typeof(int) && properties[i].Name != "id"))
                 {
                     q_k += $"{properties[i].Name}";
                     q_v += $"@{properties[i].Name}";
