@@ -26,8 +26,6 @@ namespace AR_Docent_MVC.Controllers
 
         private ILogger<UnityController> _logger;
 
-        private SasTokenContainer _sasTokens;
-
         public UnityController(
             ILogger<UnityController> logger,
             ARBlobStorageService storageService,
@@ -37,13 +35,11 @@ namespace AR_Docent_MVC.Controllers
             _storageService = storageService;
             _sqlService = sqlService;
             _logger = logger;
-
-            _sasTokens = new SasTokenContainer();
         }
 
         // GET: api/<ValuesController>
         [HttpGet]
-        public string Get()
+        public ActionResult<string> Get()
         {
             List<Product> products = _sqlService.GetItems("product");
             List<UnityInfo> info = new();
@@ -58,10 +54,6 @@ namespace AR_Docent_MVC.Controllers
                         Id = products[i].id,
                         Name = products[i].name,
                         Title = products[i].title,
-                        Audio_name = products[i].audio_name,
-                        Image_name = products[i].img_name,
-                        Image_url = _storageService.GenerateSasBlob(ServerConfig.imgContainerName, products[i].img_name),
-                        Audio_url = _storageService.GenerateSasBlob(ServerConfig.audioContainerName, products[i].audio_name),
                         Content = products[i].content,
                         Image_width = products[i].img_width,
                         Image_height = products[i].img_height,
@@ -69,24 +61,38 @@ namespace AR_Docent_MVC.Controllers
                     _logger.LogDebug($"item {i} finish");
                     info.Add(item);
                 }
-                /*
-                return WebUtility.HtmlEncode(Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes<List<UnityInfo>>(info,
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true,
-                        //Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                        //Encoder = default,
-                    })
-                    ));
-                */
                 return Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes<IEnumerable<UnityInfo>>(info));
             }
             catch (Exception e)
             {
                 Debug.Write(e.Message);
                 _logger.LogDebug(e.StackTrace);
-                return HttpStatusCode.InternalServerError.ToString() + e.Message;
+                return StatusCode(500);
             }
+        }
+
+        [HttpGet("GetImageById/{id}")]
+        public ActionResult<string> GetImageById(int id)
+        {
+            Product product = _sqlService.GetItemById("product", id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            string url = _storageService.GenerateSasBlob(ServerConfig.imgContainerName, product.img_name);
+            return Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(url));
+        }
+
+        [HttpGet("GetAudioById/{id}")]
+        public ActionResult<string> GetAudioById(int id)
+        {
+            Product product = _sqlService.GetItemById("product", id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            string url = _storageService.GenerateSasBlob(ServerConfig.audioContainerName, product.audio_name);
+            return Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(url));
         }
     }
 }

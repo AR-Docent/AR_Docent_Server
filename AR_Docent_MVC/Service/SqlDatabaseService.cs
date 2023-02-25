@@ -27,7 +27,8 @@ namespace AR_Docent_MVC.Service
         {
             string _query = $"SELECT * FROM {dbName} WHERE id={id}";
             Debug.WriteLine($"query:{_query}");
-            return connection.QuerySingle<T>(_query);
+            //return connection.QuerySingle<T>(_query);
+            return connection.QuerySingleOrDefault<T>(_query);
         }
         //dapper 활용 array
         public void AddItem(string dbName, T obj)
