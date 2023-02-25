@@ -86,8 +86,9 @@ namespace AR_Docent_MVC.Controllers
                 _sqlService.AddItem("product", product);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
                 return View();
             }
         }
