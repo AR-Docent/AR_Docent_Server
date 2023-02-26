@@ -105,7 +105,7 @@ namespace AR_Docent_MVC.Controllers
         public async Task<ActionResult> Edit(int id, IFormCollection collection)
         {
             try
-            {
+            { 
                 return RedirectToAction(nameof(Index));
             }
             catch

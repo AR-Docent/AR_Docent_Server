@@ -1,4 +1,5 @@
-﻿@*
+﻿@using System.Drawing
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @model AR_Docent_MVC.Models.Product
@@ -13,19 +14,22 @@
 	<div class="row mb-3">
 		<label class="col-sm-3 col-form-label">Title</label>
 		<div class="col-sm-6">
-			<input type="text" class="form-control" asp-for="title"/>
+			<input type="text" class="form-control" name="title" asp-for="title"/>
+			<span asp-validation-for="title" class="text-danger"></span>
 		</div>
 	</div>
 	<div class="row mb-3">
 		<label class="col-sm-3 col-form-label">Name</label>
 		<div class="col-sm-6">
 			<input type="text" class="form-control" name="name" asp-for="name" />
+			<span asp-validation-for="name" class="text-danger"></span>
 		</div>
 	</div>
 	<div class="row mb-3">
 		<label class="col-sm-3 col-form-label">Content</label>
 		<div class="col-sm-6">
 			<textarea type="text" class="form-control" rows="5" name="content" asp-for="content"></textarea>
+			<span asp-validation-for="content" class="text-danger"></span>
 		</div>
 	</div>
 	
@@ -33,19 +37,22 @@
 	<div class="form-group">
 		@Html.AntiForgeryToken()
 		<input type="file" class="form-control" name="image" asp-for="image" />
+		<span asp-validation-for="image" class="text-danger"></span>
 	</div>
 
 	<div class="row mb-3">
 		<label class="col-sm-3 col-form-label">Product Width</label>
 		<div class="col-sm-2" align="right">
 			<input type="number" class="form-control" asp-for="img_width"/>cm
+			<span asp-validation-for="img_width" class="text-danger"></span>
 		</div>
 	</div>
-
+	
 	<div class="row mb-3">
 		<label class="col-sm-3 col-form-label">Product Height</label>
 		<div class="col-sm-2" align="right">
 			<input type="number" class="form-control" asp-for="img_height"/>cm
+			<span asp-validation-for="img_height" class="text-danger"></span>
 		</div>
 	</div>
 
