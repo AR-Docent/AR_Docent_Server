@@ -1,4 +1,5 @@
-﻿@*
+﻿@using System.Drawing
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @model AR_Docent_MVC.Models.Product
@@ -13,7 +14,7 @@
 	<div class="row mb-3">
 		<label class="col-sm-3 col-form-label">Title</label>
 		<div class="col-sm-6">
-			<input type="text" class="form-control" asp-for="title"/>
+			<input type="text" class="form-control" name="title" asp-for="title"/>
 		</div>
 	</div>
 	<div class="row mb-3">
@@ -42,12 +43,34 @@
 		</div>
 	</div>
 
+	@if (Model != null
+			&& (Model.image != null && Model.img_width > 0))
+	{
+		using (var image = Image.FromStream(Model.image.OpenReadStream()))
+		{
+			float ratio = image.Width / image.Height;
+
+			Model.img_height = (int)(Model.img_width / ratio);
+		}
+	}
+	
 	<div class="row mb-3">
 		<label class="col-sm-3 col-form-label">Product Height</label>
 		<div class="col-sm-2" align="right">
 			<input type="number" class="form-control" asp-for="img_height"/>cm
 		</div>
 	</div>
+
+	@if (Model != null
+			&& (Model.image != null && Model.img_width > 0))
+	{
+		using (var image = Image.FromStream(Model.image.OpenReadStream()))
+		{
+			float ratio = image.Width / image.Height;
+
+			Model.img_width = (int)(Model.img_height * ratio);
+		}
+	}
 
 	<div class="row mb-3">
 		<div class="offset-sm-3 col-sm-3 d-grid">
