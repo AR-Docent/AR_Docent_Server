@@ -56,7 +56,6 @@ namespace AR_Docent_MVC.Controllers
                         Title = products[i].title,
                         Content = products[i].content,
                         Image_width = products[i].img_width,
-                        Image_height = products[i].img_height,
                     };
                     _logger.LogDebug($"item {i} finish");
                     info.Add(item);

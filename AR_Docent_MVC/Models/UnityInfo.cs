@@ -9,7 +9,6 @@ namespace AR_Docent_MVC.Models
         public string Title { get; set; }
         public string Content { get; set; }
         public int Image_width { get; set; }
-        public int Image_height { get; set; }
 
         public override string ToString()
         {

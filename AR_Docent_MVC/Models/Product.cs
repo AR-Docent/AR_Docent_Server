@@ -37,8 +37,6 @@ namespace AR_Docent_MVC.Models
         
         [Required]
         public int img_width { get; set; }
-        [Required]
-        public int img_height { get; set; }
 
         public override string ToString() => JsonSerializer.Serialize<Product>(this);
     }
