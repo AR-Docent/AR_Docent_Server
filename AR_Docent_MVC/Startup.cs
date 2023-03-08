@@ -33,8 +33,8 @@ namespace AR_Docent_MVC
             });
             
             services.AddSingleton<AzureKeyVaultService>();
-            services.AddSingleton<SqlDatabaseService<Product>>();
-            services.AddSingleton<ARBlobStorageService>();
+            services.AddTransient<SqlDatabaseService<Product>>();
+            services.AddTransient<ARBlobStorageService>();
             services.AddTransient<TextToAudioService>();
             services.AddMvc();
         }
